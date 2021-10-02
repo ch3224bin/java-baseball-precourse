@@ -136,7 +136,7 @@ public class IntegrationTest {
                 mockRandoms.when(() -> Randoms.pickNumberInRange(anyInt(), anyInt()))
                         .thenReturn(7, 1, 3);
                 running("724", "714", "713");
-                verify("1 스트라이크", "2 스트라이크", "3 스트라이크");
+                verify("1스트라이크", "2스트라이크", "3스트라이크");
             }
         }
 
@@ -167,7 +167,52 @@ public class IntegrationTest {
                 mockRandoms.when(() -> Randoms.pickNumberInRange(anyInt(), anyInt()))
                         .thenReturn(7, 1, 3);
                 running("439", "136", "371");
-                verify("1 볼", "2 볼", "3 볼");
+                verify("1볼", "2볼", "3볼");
+            }
+        }
+
+        @DisplayName("결과는 스트라이크 다음 볼 순서로 출력한다.")
+        @Test
+        public void testPrintStrikeAndBall() {
+            try (final MockedStatic<Randoms> mockRandoms = mockStatic(Randoms.class)) {
+                mockRandoms.when(() -> Randoms.pickNumberInRange(anyInt(), anyInt()))
+                        .thenReturn(7, 1, 3);
+                running("731", "316", "317");
+                verify("1스트라이크 2볼", "1스트라이크 1볼", "1스트라이크 2볼");
+            }
+        }
+
+        @DisplayName("모든 숫자가 다른 경우 \"낫싱\"으로 출력한다")
+        @Test
+        public void testPrintNothing() {
+            try (final MockedStatic<Randoms> mockRandoms = mockStatic(Randoms.class)) {
+                mockRandoms.when(() -> Randoms.pickNumberInRange(anyInt(), anyInt()))
+                        .thenReturn(7, 1, 3);
+                running("246");
+                verify("낫싱");
+            }
+        }
+
+        @DisplayName("입력 숫자와 정답이 같으면 \"3개의 숫자를 모두 맞히셨습니다! 게임 끝\" 메세지를 전송한다")
+        @Test
+        public void testPrintGameEnd() {
+            try (final MockedStatic<Randoms> mockRandoms = mockStatic(Randoms.class)) {
+                mockRandoms.when(() -> Randoms.pickNumberInRange(anyInt(), anyInt()))
+                        .thenReturn(7, 1, 3);
+                running("713");
+                verify("3스트라이크", "3개의 숫자를 모두 맞히셨습니다! 게임 끝");
+            }
+        }
+
+        @DisplayName("입력 숫자와 정답이 같으면 대기상태로 변경한다")
+        @Test
+        public void testChangeWaitingState() {
+            try (final MockedStatic<Randoms> mockRandoms = mockStatic(Randoms.class)) {
+                mockRandoms.when(() -> Randoms.pickNumberInRange(anyInt(), anyInt()))
+                        .thenReturn(7, 1, 3);
+                BaseballBot baseballBot = new BaseballBot();
+                baseballBot.send("713");
+                assertThat(baseballBot.getGameState()).isEqualTo(GameState.WAITING);
             }
         }
 

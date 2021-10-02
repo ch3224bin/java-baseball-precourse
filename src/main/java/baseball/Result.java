@@ -36,7 +36,8 @@ public class Result {
         ERROR_NOT_NUMERIC (errorCodeHandler("[ERROR] 숫자를 입력하세요.")),
         ERROR_NUMBER_LENGTH (errorCodeHandler("[ERROR] 세자리 숫자를 입력하세요.")),
         ERROR_DUPLICATE (errorCodeHandler("[ERROR] 중복 없는 숫자를 입력하세요.")),
-        OK (okCodeHandler());
+        OK (okCodeHandler()),
+        WIN (winCodeHandler());
 
         Function<Result, String> handler;
 
@@ -53,14 +54,23 @@ public class Result {
                 List<String> messages = new ArrayList<>();
 
                 if (result.strike > 0) {
-                   messages.add(String.format("%d 스트라이크", result.strike));
+                   messages.add(String.format("%d스트라이크", result.strike));
                 }
 
                 if (result.ball > 0) {
-                    messages.add(String.format("%d 볼", result.ball));
+                    messages.add(String.format("%d볼", result.ball));
                 }
 
                 return messages.size() == 0 ? "낫싱" : String.join(" ", messages);
+            };
+        }
+
+        private static Function<Result, String> winCodeHandler() {
+            return result -> {
+                List<String> messages = new ArrayList<>();
+                messages.add(String.format("%d스트라이크", result.strike));
+                messages.add(String.format("%d개의 숫자를 모두 맞히셨습니다! 게임 끝\n", result.strike));
+                return String.join("\n", messages);
             };
         }
 

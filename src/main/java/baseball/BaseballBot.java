@@ -29,10 +29,16 @@ public class BaseballBot {
             return resultBuilder.build();
         }
 
+        Result.Code code = Result.Code.OK;
         int strike = getStrike(answer);
         int ball = getBall(answer);
 
-        return Result.builder().code(Result.Code.OK).strike(strike).ball(ball).build();
+        if (strike == HIDDEN_NUMBER_COUNT) {
+            code = Result.Code.WIN;
+            this.gameState = GameState.WAITING;
+        }
+
+        return Result.builder().code(code).strike(strike).ball(ball).build();
     }
 
     private int getBall(String answer) {
@@ -66,7 +72,7 @@ public class BaseballBot {
     }
 
     public String getMessage() {
-        return "숫자를 입력해주세요 : ";
+        return this.gameState.getMessage();
     }
 
     public GameState getGameState() {
