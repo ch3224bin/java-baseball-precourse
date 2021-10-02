@@ -216,6 +216,17 @@ public class IntegrationTest {
             }
         }
 
+        @DisplayName("대기 상태로 변경되면 \"게임을 새로 시작하려면 1, 종료하려면 2를 입력하세요.\"를 전송한다")
+        @Test
+        public void test() {
+            try (final MockedStatic<Randoms> mockRandoms = mockStatic(Randoms.class)) {
+                mockRandoms.when(() -> Randoms.pickNumberInRange(anyInt(), anyInt()))
+                        .thenReturn(7, 1, 3);
+                running("713");
+                verify("3스트라이크", "3개의 숫자를 모두 맞히셨습니다! 게임 끝", "게임을 새로 시작하려면 1, 종료하려면 2를 입력하세요.");
+            }
+        }
+
         @Override
         public void runMain() {
             Application.main(new String[]{});
