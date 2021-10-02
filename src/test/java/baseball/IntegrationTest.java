@@ -1,11 +1,15 @@
 package baseball;
 
 import nextstep.test.NSTest;
+import nextstep.utils.Randoms;
 import org.junit.jupiter.api.*;
+import org.mockito.MockedStatic;
 
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mockStatic;
 
 @DisplayName("기능목록 테스트")
 public class IntegrationTest {
@@ -49,7 +53,7 @@ public class IntegrationTest {
         @DisplayName("\"숫자를 입력해주세요 : \" 묻는다")
         @Test
         public void testPrintEnterTheNumberMessage() {
-            run(" ");
+            running(" ");
             verify("숫자를 입력해주세요 : ");
         }
 
@@ -76,37 +80,65 @@ public class IntegrationTest {
         @DisplayName("입력 값이 비어 있으면 에러 메세지를 보낸다")
         @Test
         public void testEmptyValue() {
-            run("");
-            verify(Result.Code.ERROR_WRONG_ANSWER.getMessage());
+            running("");
+            verify(Result.Code.ERROR_WRONG_ANSWER.getMessage(null));
         }
 
         @DisplayName("입력 값이 숫자가 아니면 에러 메세지를 보낸다")
         @Test
         public void testNumericValue() {
-            run("abc");
-            verify(Result.Code.ERROR_NOT_NUMERIC.getMessage());
+            running("abc");
+            verify(Result.Code.ERROR_NOT_NUMERIC.getMessage(null));
         }
 
         @DisplayName("입력 값이 세자리가 아니면 에러 메세지를 보낸다")
         @Test
         public void testLength() {
-            run("12345");
-            verify(Result.Code.ERROR_NUMBER_LENGTH.getMessage());
+            running("12345");
+            verify(Result.Code.ERROR_NUMBER_LENGTH.getMessage(null));
         }
 
         @DisplayName("입력 값에 0이 들어가면 에러 메세지를 보낸다")
         @Test
         public void testContainsZero() {
-            run("109");
-            verify(Result.Code.ERROR_WRONG_ANSWER.getMessage());
+            running("109");
+            verify(Result.Code.ERROR_WRONG_ANSWER.getMessage(null));
         }
 
         @DisplayName("중복이 있으면 에러 메세지를 보낸다")
         @Test
         public void testDuplicated() {
-            run("113");
-            verify(Result.Code.ERROR_DUPLICATE.getMessage());
+            running("113");
+            verify(Result.Code.ERROR_DUPLICATE.getMessage(null));
         }
+
+        @DisplayName("입력 받은 세자리 숫자와 정답의 같은 자리 숫자 만큼 스트라이크 횟수를 증가시킨다")
+        @Test
+        public void testStrikeResult() {
+            try (final MockedStatic<Randoms> mockRandoms = mockStatic(Randoms.class)) {
+                mockRandoms.when(() -> Randoms.pickNumberInRange(anyInt(), anyInt()))
+                        .thenReturn(7, 1, 3);
+                BaseballBot baseballBot = new BaseballBot();
+                Result result = baseballBot.send("823");
+                assertThat(result.getStrike()).isEqualTo(1);
+                result = baseballBot.send("413");
+                assertThat(result.getStrike()).isEqualTo(2);
+                result = baseballBot.send("713");
+                assertThat(result.getStrike()).isEqualTo(3);
+            }
+        }
+
+        @DisplayName("같은 자리의 숫자 만큼 스트라이크로 출력 한다")
+        @Test
+        public void testPrintStrike() {
+            try (final MockedStatic<Randoms> mockRandoms = mockStatic(Randoms.class)) {
+                mockRandoms.when(() -> Randoms.pickNumberInRange(anyInt(), anyInt()))
+                        .thenReturn(7, 1, 3);
+                running("724", "714", "713");
+                verify("1 스트라이크", "2 스트라이크", "3 스트라이크");
+            }
+        }
+
 
         @Override
         public void runMain() {

@@ -1,14 +1,24 @@
 package baseball;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
 public class Result {
     private final Code code;
+    private final int strike;
 
-    public Result(Code code) {
+    public Result(Code code, int strike) {
         this.code = code;
+        this.strike = strike;
     }
 
     public String getMessage() {
-        return code.getMessage();
+        return code.getMessage(this);
+    }
+
+    public int getStrike() {
+        return strike;
     }
 
     public static Builder builder() {
@@ -16,24 +26,41 @@ public class Result {
     }
 
     enum Code {
-        ERROR_WRONG_ANSWER("[ERROR] 1~9 사이의 중복 없는 세자리 숫자를 입력하세요."),
-        ERROR_NOT_NUMERIC ("[ERROR] 숫자를 입력하세요."),
-        ERROR_NUMBER_LENGTH ("[ERROR] 세자리 숫자를 입력하세요."),
-        ERROR_DUPLICATE ("[ERROR] 중복 없는 숫자를 입력하세요.");
+        ERROR_WRONG_ANSWER(errorCodeHandler("[ERROR] 1~9 사이의 중복 없는 세자리 숫자를 입력하세요.")),
+        ERROR_NOT_NUMERIC (errorCodeHandler("[ERROR] 숫자를 입력하세요.")),
+        ERROR_NUMBER_LENGTH (errorCodeHandler("[ERROR] 세자리 숫자를 입력하세요.")),
+        ERROR_DUPLICATE (errorCodeHandler("[ERROR] 중복 없는 숫자를 입력하세요.")),
+        OK (okCodeHandler());
 
-        String message;
+        Function<Result, String> handler;
 
-        Code(String message) {
-            this.message = message;
+        Code(Function<Result, String> handler) {
+            this.handler = handler;
         }
 
-        public String getMessage() {
-            return message;
+        private static Function<Result, String> errorCodeHandler(String message) {
+            return result -> message;
+        }
+
+        private static Function<Result, String> okCodeHandler() {
+            return result -> {
+                List<String> messages = new ArrayList<>();
+                if (result.strike > 0) {
+                    messages.add(String.format("%d 스트라이크", result.strike));
+                }
+
+                return messages.size() == 0 ? "낫싱" : String.join(" ", messages);
+            };
+        }
+
+        public String getMessage(Result result) {
+            return handler.apply(result);
         }
     }
 
     public static class Builder {
         private Code code;
+        private int strike;
 
         private Builder() {}
 
@@ -42,8 +69,13 @@ public class Result {
             return this;
         }
 
+        public Builder strike(int strike) {
+            this.strike = strike;
+            return this;
+        }
+
         public Result build() {
-            return new Result(code);
+            return new Result(code, strike);
         }
     }
 }
