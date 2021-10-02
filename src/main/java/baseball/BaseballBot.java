@@ -26,6 +26,10 @@ public class BaseballBot {
         }
     }
 
+    public String getMessage() {
+        return "숫자를 입력해주세요 : ";
+    }
+
     public GameState getGameState() {
         return gameState;
     }

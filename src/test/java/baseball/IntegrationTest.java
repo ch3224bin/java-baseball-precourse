@@ -1,9 +1,7 @@
 package baseball;
 
 import nextstep.test.NSTest;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.util.Objects;
 
@@ -23,6 +21,16 @@ public class IntegrationTest {
     @Nested
     class WhenStart extends NSTest {
 
+        @BeforeEach
+        void beforeEach() {
+            super.setUp();
+        }
+
+        @AfterEach
+        void tearDown() {
+            outputStandard();
+        }
+
         @DisplayName("임의의 숫자 3개를 생성한다")
         @Test
         public void testRandomHiddenNumber() {
@@ -38,9 +46,16 @@ public class IntegrationTest {
             }
         }
 
+        @DisplayName("\"숫자를 입력해주세요 : \" 묻는다")
+        @Test
+        public void testPrintEnterTheNumberMessage() {
+            run();
+            verify("숫자를 입력해주세요 : ");
+        }
+
         @Override
         public void runMain() {
-
+            Application.main(new String[]{});
         }
     }
 

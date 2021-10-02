@@ -56,7 +56,7 @@ public abstract class NSTest {
     }
 
     protected String output() {
-        return captor.toString().trim();
+        return captor.toString();
     }
 
     protected void outputStandard() {
