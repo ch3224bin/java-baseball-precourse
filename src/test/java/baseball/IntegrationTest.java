@@ -218,7 +218,7 @@ public class IntegrationTest {
 
         @DisplayName("대기 상태로 변경되면 \"게임을 새로 시작하려면 1, 종료하려면 2를 입력하세요.\"를 전송한다")
         @Test
-        public void test() {
+        public void testWhenChangedWaitingStateThenSendMessage() {
             try (final MockedStatic<Randoms> mockRandoms = mockStatic(Randoms.class)) {
                 mockRandoms.when(() -> Randoms.pickNumberInRange(anyInt(), anyInt()))
                         .thenReturn(7, 1, 3);
@@ -231,6 +231,38 @@ public class IntegrationTest {
         public void runMain() {
             Application.main(new String[]{});
         }
+    }
+
+    @DisplayName("대기 상태에서")
+    @Nested
+    class WhenWaiting extends NSTest {
+
+        @BeforeEach
+        void beforeEach() {
+            super.setUp();
+        }
+
+        @AfterEach
+        void tearDown() {
+            outputStandard();
+        }
+
+        @DisplayName("1, 2 외의 값을 받으면 오류 메세지를 출력한다")
+        @Test
+        public void testPrintErrorMessage() {
+            try (final MockedStatic<Randoms> mockRandoms = mockStatic(Randoms.class)) {
+                mockRandoms.when(() -> Randoms.pickNumberInRange(anyInt(), anyInt()))
+                        .thenReturn(7, 1, 3);
+                running("713", "444");
+                verify("3스트라이크", "[ERROR] 게임을 새로 시작하려면 1, 종료하려면 2를 입력하세요");
+            }
+        }
+
+        @Override
+        public void runMain() {
+            Application.main(new String[]{});
+        }
+
     }
 
 }

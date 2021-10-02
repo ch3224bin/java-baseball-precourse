@@ -1,7 +1,11 @@
-package baseball;
+package baseball.validator;
 
-public class Validator {
-    static boolean isValidate(Result.Builder resultBuilder, String answer) {
+import baseball.Result;
+
+public class GameProgressValidator implements Validator {
+
+    @Override
+    public boolean isValidate(Result.Builder resultBuilder, String answer) {
         return isNotEmpty(resultBuilder, answer) &&
                 isThreeNumbers(resultBuilder, answer) &&
                 isNumeric(resultBuilder, answer) &&
@@ -9,7 +13,7 @@ public class Validator {
                 isNotDuplicated(resultBuilder, answer);
     }
 
-    private static boolean isNotEmpty(Result.Builder resultBuilder, String answer) {
+    private boolean isNotEmpty(Result.Builder resultBuilder, String answer) {
         // 입력 값이 없을 때
         if (answer == null || answer.length() == 0) {
             resultBuilder.code(Result.Code.ERROR_WRONG_ANSWER);
@@ -18,7 +22,7 @@ public class Validator {
         return true;
     }
 
-    private static boolean isThreeNumbers(Result.Builder resultBuilder, String answer) {
+    private boolean isThreeNumbers(Result.Builder resultBuilder, String answer) {
         // 숫자는 세자리만
         if (answer.length() != 3) {
             resultBuilder.code(Result.Code.ERROR_NUMBER_LENGTH);
@@ -27,7 +31,7 @@ public class Validator {
         return true;
     }
 
-    private static boolean isNumeric(Result.Builder resultBuilder, String answer) {
+    private boolean isNumeric(Result.Builder resultBuilder, String answer) {
         // 숫자만
         try {
             Integer.parseInt(answer);
@@ -38,7 +42,7 @@ public class Validator {
         return true;
     }
 
-    private static boolean doesNotContainsZero(Result.Builder resultBuilder, String answer) {
+    private boolean doesNotContainsZero(Result.Builder resultBuilder, String answer) {
         // 0이 없어야함
         if (answer.contains("0")) {
             resultBuilder.code(Result.Code.ERROR_WRONG_ANSWER);
@@ -47,7 +51,7 @@ public class Validator {
         return true;
     }
 
-    private static boolean isNotDuplicated(Result.Builder resultBuilder, String answer) {
+    private boolean isNotDuplicated(Result.Builder resultBuilder, String answer) {
         // 중복이 없어야 함
         int[] arr = new int[10];
         int max = 0;

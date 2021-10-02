@@ -1,18 +1,24 @@
 package baseball;
 
+import baseball.validator.GameProgressValidator;
+import baseball.validator.GameWaitingValidator;
+import baseball.validator.Validator;
 import nextstep.utils.Randoms;
 
 import java.util.*;
+import java.util.function.Function;
 
 public class BaseballBot {
     private final static int HIDDEN_NUMBER_COUNT = 3; // 정답 숫자의 자리수
 
     private GameState gameState;
     private List<Integer> hiddenNumber;
+    private Map<GameState, Function<String, Result>> router;
 
     public BaseballBot() {
         gameState = GameState.PROGRESS;
         initHiddenNumber();
+        initRouter();
     }
 
     private void initHiddenNumber() {
@@ -23,22 +29,49 @@ public class BaseballBot {
         hiddenNumber = new ArrayList<>(resultSet);
     }
 
+    private void initRouter() {
+        router = new HashMap<>();
+        router.put(GameState.PROGRESS, progressHandler(new GameProgressValidator()));
+        router.put(GameState.WAITING, waitingHandler(new GameWaitingValidator()));
+    }
+
     public Result send(String answer) {
-        Result.Builder resultBuilder = Result.builder();
-        if (!Validator.isValidate(resultBuilder, answer)) {
-            return resultBuilder.build();
-        }
+        return this.router.get(this.gameState).apply(answer);
+    }
 
-        Result.Code code = Result.Code.OK;
-        int strike = getStrike(answer);
-        int ball = getBall(answer);
+    private Function<String, Result> progressHandler(Validator validator) {
+        return answer -> {
+            Result.Builder resultBuilder = Result.builder();
+            if (!validator.isValidate(resultBuilder, answer)) {
+                return resultBuilder.build();
+            }
 
-        if (strike == HIDDEN_NUMBER_COUNT) {
-            code = Result.Code.WIN;
-            this.gameState = GameState.WAITING;
-        }
+            Result.Code code = Result.Code.OK;
+            int strike = getStrike(answer);
+            int ball = getBall(answer);
 
-        return Result.builder().code(code).strike(strike).ball(ball).build();
+            if (strike == HIDDEN_NUMBER_COUNT) {
+                code = Result.Code.WIN;
+                changeWaitingState();
+            }
+
+            return Result.builder().code(code).strike(strike).ball(ball).build();
+        };
+    }
+
+    private Function<String, Result> waitingHandler(Validator validator) {
+        return answer -> {
+            Result.Builder resultBuilder = Result.builder();
+            if (!validator.isValidate(resultBuilder, answer)) {
+                return resultBuilder.build();
+            }
+
+            return Result.builder().build();
+        };
+    }
+
+    private void changeWaitingState() {
+        this.gameState = GameState.WAITING;
     }
 
     private int getBall(String answer) {

@@ -31,11 +31,12 @@ public class Result {
         return new Builder();
     }
 
-    enum Code {
-        ERROR_WRONG_ANSWER(errorCodeHandler("[ERROR] 1~9 사이의 중복 없는 세자리 숫자를 입력하세요.")),
-        ERROR_NOT_NUMERIC (errorCodeHandler("[ERROR] 숫자를 입력하세요.")),
-        ERROR_NUMBER_LENGTH (errorCodeHandler("[ERROR] 세자리 숫자를 입력하세요.")),
-        ERROR_DUPLICATE (errorCodeHandler("[ERROR] 중복 없는 숫자를 입력하세요.")),
+    public enum Code {
+        ERROR_WRONG_ANSWER(errorCodeHandler("1~9 사이의 중복 없는 세자리 숫자를 입력하세요.")),
+        ERROR_NOT_NUMERIC (errorCodeHandler("숫자를 입력하세요.")),
+        ERROR_NUMBER_LENGTH (errorCodeHandler("세자리 숫자를 입력하세요.")),
+        ERROR_DUPLICATE (errorCodeHandler("중복 없는 숫자를 입력하세요.")),
+        ERROR_WAITING (errorCodeHandler("게임을 새로 시작하려면 1, 종료하려면 2를 입력하세요")),
         OK (okCodeHandler()),
         WIN (winCodeHandler());
 
@@ -46,7 +47,7 @@ public class Result {
         }
 
         private static Function<Result, String> errorCodeHandler(String message) {
-            return result -> message;
+            return result -> String.format("[ERROR] %s", message);
         }
 
         private static Function<Result, String> okCodeHandler() {
