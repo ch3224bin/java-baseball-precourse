@@ -7,10 +7,12 @@ import java.util.function.Function;
 public class Result {
     private final Code code;
     private final int strike;
+    private final int ball;
 
-    public Result(Code code, int strike) {
+    public Result(Code code, int strike, int ball) {
         this.code = code;
         this.strike = strike;
+        this.ball = ball;
     }
 
     public String getMessage() {
@@ -19,6 +21,10 @@ public class Result {
 
     public int getStrike() {
         return strike;
+    }
+
+    public int getBall() {
+        return ball;
     }
 
     public static Builder builder() {
@@ -45,8 +51,13 @@ public class Result {
         private static Function<Result, String> okCodeHandler() {
             return result -> {
                 List<String> messages = new ArrayList<>();
+
                 if (result.strike > 0) {
-                    messages.add(String.format("%d 스트라이크", result.strike));
+                   messages.add(String.format("%d 스트라이크", result.strike));
+                }
+
+                if (result.ball > 0) {
+                    messages.add(String.format("%d 볼", result.ball));
                 }
 
                 return messages.size() == 0 ? "낫싱" : String.join(" ", messages);
@@ -61,6 +72,7 @@ public class Result {
     public static class Builder {
         private Code code;
         private int strike;
+        private int ball;
 
         private Builder() {}
 
@@ -74,8 +86,13 @@ public class Result {
             return this;
         }
 
+        public Builder ball(int ball) {
+            this.ball = ball;
+            return this;
+        }
+
         public Result build() {
-            return new Result(code, strike);
+            return new Result(code, strike, ball);
         }
     }
 }

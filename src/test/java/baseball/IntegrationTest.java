@@ -5,6 +5,7 @@ import nextstep.utils.Randoms;
 import org.junit.jupiter.api.*;
 import org.mockito.MockedStatic;
 
+import java.util.List;
 import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.*;
@@ -40,7 +41,7 @@ public class IntegrationTest {
         public void testRandomHiddenNumber() {
             for (int i = 0; i < 100; i++) { // 100번 정도 수행
                 BaseballBot baseballBot = new BaseballBot();
-                Integer[] hiddenNumber = baseballBot.getHiddenNumber();
+                List<Integer> hiddenNumber = baseballBot.getHiddenNumber();
 
                 // 중복 없는 세자리 숫자 검사
                 assertThat(hiddenNumber).isNotNull();
@@ -139,6 +140,36 @@ public class IntegrationTest {
             }
         }
 
+        @DisplayName("입력 받은 세자리 숫자와 정답의 다른 자리 숫자 만큼 볼 횟수를 증가시킨다")
+        @Test
+        public void testBallResult() {
+            try (final MockedStatic<Randoms> mockRandoms = mockStatic(Randoms.class)) {
+                mockRandoms.when(() -> Randoms.pickNumberInRange(anyInt(), anyInt()))
+                        .thenReturn(7, 1, 3);
+                BaseballBot baseballBot = new BaseballBot();
+                Result result = baseballBot.send("371");
+                assertThat(result.getBall()).isEqualTo(3);
+                result = baseballBot.send("136");
+                assertThat(result.getBall()).isEqualTo(2);
+                result = baseballBot.send("439");
+                assertThat(result.getBall()).isEqualTo(1);
+                result = baseballBot.send("713");
+                assertThat(result.getBall()).isEqualTo(0);
+                result = baseballBot.send("824");
+                assertThat(result.getBall()).isEqualTo(0);
+            }
+        }
+
+        @DisplayName("같은 자리의 숫자 만큼 볼로 출력 한다")
+        @Test
+        public void testPrintBall() {
+            try (final MockedStatic<Randoms> mockRandoms = mockStatic(Randoms.class)) {
+                mockRandoms.when(() -> Randoms.pickNumberInRange(anyInt(), anyInt()))
+                        .thenReturn(7, 1, 3);
+                running("439", "136", "371");
+                verify("1 볼", "2 볼", "3 볼");
+            }
+        }
 
         @Override
         public void runMain() {
