@@ -49,8 +49,63 @@ public class IntegrationTest {
         @DisplayName("\"숫자를 입력해주세요 : \" 묻는다")
         @Test
         public void testPrintEnterTheNumberMessage() {
-            run();
+            run(" ");
             verify("숫자를 입력해주세요 : ");
+        }
+
+        @Override
+        public void runMain() {
+            Application.main(new String[]{});
+        }
+    }
+
+    @DisplayName("진행 상태에서")
+    @Nested
+    class WhenProgress extends NSTest {
+
+        @BeforeEach
+        void beforeEach() {
+            super.setUp();
+        }
+
+        @AfterEach
+        void tearDown() {
+            outputStandard();
+        }
+
+        @DisplayName("입력 값이 비어 있으면 에러 메세지를 보낸다")
+        @Test
+        public void testEmptyValue() {
+            run("");
+            verify(Result.Code.ERROR_WRONG_ANSWER.getMessage());
+        }
+
+        @DisplayName("입력 값이 숫자가 아니면 에러 메세지를 보낸다")
+        @Test
+        public void testNumericValue() {
+            run("abc");
+            verify(Result.Code.ERROR_NOT_NUMERIC.getMessage());
+        }
+
+        @DisplayName("입력 값이 세자리가 아니면 에러 메세지를 보낸다")
+        @Test
+        public void testLength() {
+            run("12345");
+            verify(Result.Code.ERROR_NUMBER_LENGTH.getMessage());
+        }
+
+        @DisplayName("입력 값에 0이 들어가면 에러 메세지를 보낸다")
+        @Test
+        public void testContainsZero() {
+            run("109");
+            verify(Result.Code.ERROR_WRONG_ANSWER.getMessage());
+        }
+
+        @DisplayName("중복이 있으면 에러 메세지를 보낸다")
+        @Test
+        public void testDuplicated() {
+            run("113");
+            verify(Result.Code.ERROR_DUPLICATE.getMessage());
         }
 
         @Override

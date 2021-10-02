@@ -26,6 +26,14 @@ public class BaseballBot {
         }
     }
 
+    public Result send(String answer) {
+        Result.Builder resultBuilder = Result.builder();
+        if (!Validator.isValidate(resultBuilder, answer)) {
+            return resultBuilder.build();
+        }
+        return new Result(Result.Code.ERROR_NUMBER_LENGTH);
+    }
+
     public String getMessage() {
         return "숫자를 입력해주세요 : ";
     }
