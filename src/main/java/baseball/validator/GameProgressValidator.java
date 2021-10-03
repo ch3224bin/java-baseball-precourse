@@ -1,6 +1,7 @@
 package baseball.validator;
 
 import baseball.Result;
+import baseball.ResultView;
 
 public class GameProgressValidator implements Validator {
 
@@ -16,7 +17,7 @@ public class GameProgressValidator implements Validator {
     private boolean isNotEmpty(Result.Builder resultBuilder, String answer) {
         // 입력 값이 없을 때
         if (answer == null || answer.length() == 0) {
-            resultBuilder.code(Result.Code.ERROR_WRONG_ANSWER);
+            resultBuilder.view(ResultView.ERROR_WRONG_ANSWER);
             return false;
         }
         return true;
@@ -25,7 +26,7 @@ public class GameProgressValidator implements Validator {
     private boolean isThreeNumbers(Result.Builder resultBuilder, String answer) {
         // 숫자는 세자리만
         if (answer.length() != 3) {
-            resultBuilder.code(Result.Code.ERROR_NUMBER_LENGTH);
+            resultBuilder.view(ResultView.ERROR_NUMBER_LENGTH);
             return false;
         }
         return true;
@@ -36,7 +37,7 @@ public class GameProgressValidator implements Validator {
         try {
             Integer.parseInt(answer);
         } catch (NumberFormatException e) {
-            resultBuilder.code(Result.Code.ERROR_NOT_NUMERIC);
+            resultBuilder.view(ResultView.ERROR_NOT_NUMERIC);
             return false;
         }
         return true;
@@ -45,7 +46,7 @@ public class GameProgressValidator implements Validator {
     private boolean doesNotContainsZero(Result.Builder resultBuilder, String answer) {
         // 0이 없어야함
         if (answer.contains("0")) {
-            resultBuilder.code(Result.Code.ERROR_WRONG_ANSWER);
+            resultBuilder.view(ResultView.ERROR_WRONG_ANSWER);
             return false;
         }
         return true;
@@ -61,7 +62,7 @@ public class GameProgressValidator implements Validator {
         }
 
         if (max > 1) {
-            resultBuilder.code(Result.Code.ERROR_DUPLICATE);
+            resultBuilder.view(ResultView.ERROR_DUPLICATE);
             return false;
         }
 

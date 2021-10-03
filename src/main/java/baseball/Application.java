@@ -16,7 +16,7 @@ public class Application {
                 Result result = baseballBot.send(answer);
                 System.out.println(result.getMessage());
             } catch (NoSuchElementException e) {
-                System.out.println(Result.Code.ERROR_WRONG_ANSWER.getMessage(null));
+                System.out.println(ResultView.ERROR_WRONG_ANSWER.getMessage(null));
                 throw e;
             }
         }

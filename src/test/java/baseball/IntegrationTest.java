@@ -82,35 +82,35 @@ public class IntegrationTest {
         @Test
         public void testEmptyValue() {
             running("");
-            verify(Result.Code.ERROR_WRONG_ANSWER.getMessage(null));
+            verify(ResultView.ERROR_WRONG_ANSWER.getMessage(null));
         }
 
         @DisplayName("입력 값이 숫자가 아니면 에러 메세지를 보낸다")
         @Test
         public void testNumericValue() {
             running("abc");
-            verify(Result.Code.ERROR_NOT_NUMERIC.getMessage(null));
+            verify(ResultView.ERROR_NOT_NUMERIC.getMessage(null));
         }
 
         @DisplayName("입력 값이 세자리가 아니면 에러 메세지를 보낸다")
         @Test
         public void testLength() {
             running("12345");
-            verify(Result.Code.ERROR_NUMBER_LENGTH.getMessage(null));
+            verify(ResultView.ERROR_NUMBER_LENGTH.getMessage(null));
         }
 
         @DisplayName("입력 값에 0이 들어가면 에러 메세지를 보낸다")
         @Test
         public void testContainsZero() {
             running("109");
-            verify(Result.Code.ERROR_WRONG_ANSWER.getMessage(null));
+            verify(ResultView.ERROR_WRONG_ANSWER.getMessage(null));
         }
 
         @DisplayName("중복이 있으면 에러 메세지를 보낸다")
         @Test
         public void testDuplicated() {
             running("113");
-            verify(Result.Code.ERROR_DUPLICATE.getMessage(null));
+            verify(ResultView.ERROR_DUPLICATE.getMessage(null));
         }
 
         @DisplayName("입력 받은 세자리 숫자와 정답의 같은 자리 숫자 만큼 스트라이크 횟수를 증가시킨다")
