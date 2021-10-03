@@ -56,16 +56,16 @@ public class BaseballBot {
         return new GameHandler(validator) {
             @Override
             Result run(String answer) {
-                ResultView code = ResultView.OK;
+                ResultView view = ResultView.OK;
                 int strike = getStrike(answer);
                 int ball = getBall(answer);
 
                 if (strike == HIDDEN_NUMBER_COUNT) {
-                    code = ResultView.WIN;
+                    view = ResultView.WIN;
                     changeStateToWaiting();
                 }
 
-                return Result.builder().view(code).strike(strike).ball(ball).build();
+                return Result.builder().view(view).strike(strike).ball(ball).build();
             }
         };
     }
