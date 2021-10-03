@@ -9,16 +9,20 @@ public class Application {
         BaseballBot baseballBot = new BaseballBot();
 
         while (baseballBot.getGameState() != GameState.FINISH) {
-            System.out.print(baseballBot.getMessage());
+            playGame(baseballBot);
+        }
+    }
 
-            try {
-                String answer = Console.readLine().trim();
-                Result result = baseballBot.send(answer);
-                System.out.println(result.getMessage());
-            } catch (NoSuchElementException e) {
-                System.out.println(ResultView.ERROR_WRONG_ANSWER.getMessage(null));
-                throw e;
-            }
+    private static void playGame(BaseballBot baseballBot) {
+        System.out.print(baseballBot.getMessage());
+
+        try {
+            String answer = Console.readLine().trim();
+            Result result = baseballBot.send(answer);
+            System.out.println(result.getMessage());
+        } catch (NoSuchElementException e) {
+            System.out.println(ResultView.ERROR_WRONG_ANSWER.getMessage(null));
+            throw e;
         }
     }
 }
