@@ -16,8 +16,7 @@ public class BaseballBot {
     private Map<GameState, Function<String, Result>> router;
 
     public BaseballBot() {
-        gameState = GameState.PROGRESS;
-        initHiddenNumber();
+        changeStateToProgress();
         initRouter();
     }
 
@@ -52,7 +51,7 @@ public class BaseballBot {
 
             if (strike == HIDDEN_NUMBER_COUNT) {
                 code = Result.Code.WIN;
-                changeWaitingState();
+                changeStateToWaiting();
             }
 
             return Result.builder().code(code).strike(strike).ball(ball).build();
@@ -66,11 +65,28 @@ public class BaseballBot {
                 return resultBuilder.build();
             }
 
-            return Result.builder().build();
+            if ("1".equals(answer)) {
+                changeStateToProgress();
+            }
+
+            if ("2".equals(answer)) {
+                changeStateToFinish();
+            }
+
+            return Result.builder().code(Result.Code.CHANGE).build();
         };
     }
 
-    private void changeWaitingState() {
+    private void changeStateToFinish() {
+        this.gameState = GameState.FINISH;
+    }
+
+    private void changeStateToProgress() {
+        this.gameState = GameState.PROGRESS;
+        initHiddenNumber();
+    }
+
+    private void changeStateToWaiting() {
         this.gameState = GameState.WAITING;
     }
 

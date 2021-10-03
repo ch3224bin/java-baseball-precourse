@@ -38,9 +38,10 @@ public class Result {
         ERROR_DUPLICATE (errorCodeHandler("중복 없는 숫자를 입력하세요.")),
         ERROR_WAITING (errorCodeHandler("게임을 새로 시작하려면 1, 종료하려면 2를 입력하세요")),
         OK (okCodeHandler()),
-        WIN (winCodeHandler());
+        WIN (winCodeHandler()),
+        CHANGE (changeCodeHandler());
 
-        Function<Result, String> handler;
+        private Function<Result, String> handler;
 
         Code(Function<Result, String> handler) {
             this.handler = handler;
@@ -70,9 +71,13 @@ public class Result {
             return result -> {
                 List<String> messages = new ArrayList<>();
                 messages.add(String.format("%d스트라이크", result.strike));
-                messages.add(String.format("%d개의 숫자를 모두 맞히셨습니다! 게임 끝\n", result.strike));
+                messages.add(String.format("%d개의 숫자를 모두 맞히셨습니다! 게임 끝", result.strike));
                 return String.join("\n", messages);
             };
+        }
+
+        private static Function<Result, String> changeCodeHandler() {
+            return result -> "";
         }
 
         public String getMessage(Result result) {

@@ -258,11 +258,40 @@ public class IntegrationTest {
             }
         }
 
+        @DisplayName("1을 입력 받으면 게임을 시작 상태로 변경한다")
+        @Test
+        public void testGameRestart() {
+            try (final MockedStatic<Randoms> mockRandoms = mockStatic(Randoms.class)) {
+                mockRandoms.when(() -> Randoms.pickNumberInRange(anyInt(), anyInt()))
+                        .thenReturn(7, 1, 3)
+                        .thenReturn(7, 1, 3);
+                BaseballBot baseballBot = new BaseballBot();
+                baseballBot.send("713");
+                assertThat(baseballBot.getGameState()).isEqualTo(GameState.WAITING);
+                baseballBot.send("1");
+                assertThat(baseballBot.getGameState()).isEqualTo(GameState.PROGRESS);
+                baseballBot.send("713");
+                baseballBot.send("2");
+            }
+        }
+
+        @DisplayName("2를 입력 받으면 프로그램을 종료시킨다")
+        @Test
+        public void testGameShutdown() {
+            try (final MockedStatic<Randoms> mockRandoms = mockStatic(Randoms.class)) {
+                mockRandoms.when(() -> Randoms.pickNumberInRange(anyInt(), anyInt()))
+                        .thenReturn(7, 1, 3);
+                BaseballBot baseballBot = new BaseballBot();
+                baseballBot.send("713");
+                assertThat(baseballBot.getGameState()).isEqualTo(GameState.WAITING);
+                baseballBot.send("2");
+                assertThat(baseballBot.getGameState()).isEqualTo(GameState.FINISH);
+            }
+        }
+
         @Override
         public void runMain() {
             Application.main(new String[]{});
         }
-
     }
-
 }
