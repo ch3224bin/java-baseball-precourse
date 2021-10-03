@@ -7,7 +7,7 @@ public class GameWaitingValidator implements Validator {
 
     @Override
     public boolean isValidate(Result.Builder resultBuilder, String answer) {
-        if (!"1".equals(answer) && !"2".equals(answer)) {
+        if (!WaitingCommandAnswerSet.contains(answer)) {
             resultBuilder.view(ResultView.ERROR_WAITING);
             return false;
         }

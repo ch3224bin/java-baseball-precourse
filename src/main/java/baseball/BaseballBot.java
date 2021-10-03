@@ -3,6 +3,7 @@ package baseball;
 import baseball.validator.GameProgressValidator;
 import baseball.validator.GameWaitingValidator;
 import baseball.validator.Validator;
+import baseball.validator.WaitingCommandAnswerSet;
 import nextstep.utils.Randoms;
 
 import java.util.*;
@@ -74,11 +75,11 @@ public class BaseballBot {
         return new GameHandler(validator) {
             @Override
             Result run(String answer) {
-                if ("1".equals(answer)) {
+                if (WaitingCommandAnswerSet.ONE_MORE_PLAY.isEqualTo(answer)) {
                     changeStateToProgress();
                 }
 
-                if ("2".equals(answer)) {
+                if (WaitingCommandAnswerSet.GAME_FINISH.isEqualTo(answer)) {
                     changeStateToFinish();
                 }
 
