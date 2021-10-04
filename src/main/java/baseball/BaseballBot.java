@@ -131,6 +131,10 @@ public class BaseballBot {
         return strike;
     }
 
+    public boolean isFinish() {
+        return this.gameState == GameState.FINISH;
+    }
+
     public String getMessage() {
         return this.gameState.getMessage();
     }
